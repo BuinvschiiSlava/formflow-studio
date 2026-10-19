@@ -1,0 +1,25 @@
+<header class="topbar" [class.topbar--compact]="compact()" data-testid="app-shell">
+  <a class="brand" routerLink="/">
+    <span class="brand__mark" aria-hidden="true"><ng-icon name="lucideBlocks" /></span>
+    <span class="brand__name">FormFlow</span>
+    <span class="brand__suffix">Studio</span>
+  </a>
+
+  <nav class="topbar__nav" aria-label="Primary navigation">
+    <a routerLink="/templates" routerLinkActive="is-active">
+      <ng-icon name="lucideLayoutTemplate" aria-hidden="true" />
+      <span>Templates</span>
+    </a>
+    <a
+      href="https://github.com/BuinvschiiSlava/formflow-studio"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Open FormFlow Studio on GitHub in a new tab"
+    >
+      <ng-icon name="lucideGitFork" aria-hidden="true" />
+      <span>GitHub</span>
+    </a>
+  </nav>
+</header>
+
+<ng-content />

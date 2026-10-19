@@ -1,0 +1,74 @@
+<app-shell>
+  <main id="main-content">
+    <header class="page-hero">
+      <span class="page-hero__icon" aria-hidden="true"
+        ><ng-icon name="lucideLayoutTemplate"
+      /></span>
+      <p>Form library</p>
+      <h1>Start with a thoughtful foundation</h1>
+      <span
+        >Every template includes realistic validation and conditional logic you can inspect, edit
+        and export.</span
+      >
+    </header>
+
+    <div class="page-width">
+      <div class="filters" aria-label="Filter templates">
+        <label class="search">
+          <ng-icon name="lucideSearch" aria-hidden="true" />
+          <span class="visually-hidden">Search templates</span>
+          <input
+            type="search"
+            placeholder="Search templates"
+            [value]="query()"
+            (input)="updateQuery($event)"
+          />
+        </label>
+        <div class="categories" role="group" aria-label="Template category">
+          @for (item of categories; track item) {
+            <button
+              type="button"
+              [class.is-active]="category() === item"
+              (click)="category.set(item)"
+            >
+              {{ item }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (templates().length === 0) {
+        <app-empty-state
+          title="No matching templates"
+          description="Try another search or clear the selected category."
+          icon="search"
+        >
+          <button
+            type="button"
+            class="button button--secondary"
+            (click)="query.set(''); category.set('All')"
+          >
+            Clear filters
+          </button>
+        </app-empty-state>
+      } @else {
+        <section class="template-grid" aria-label="Form templates">
+          @for (template of templates(); track template.id) {
+            <app-template-card [template]="template" (use)="useTemplate(template.id)" />
+          }
+        </section>
+      }
+
+      <aside class="trust-card">
+        <ng-icon name="lucideShieldCheck" aria-hidden="true" />
+        <div>
+          <strong>Safe to explore.</strong
+          ><span
+            >Using a template creates your own independent draft. The original stays
+            unchanged.</span
+          >
+        </div>
+      </aside>
+    </div>
+  </main>
+</app-shell>

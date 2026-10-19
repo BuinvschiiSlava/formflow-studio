@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="title desc">
+  <title id="title">FormFlow Studio</title>
+  <desc id="desc">Local-first visual Angular form builder with a three-panel editor preview.</desc>
+  <defs>
+    <linearGradient id="background" x1="66" y1="12" x2="1190" y2="438" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827" />
+      <stop offset=".5" stop-color="#312e81" />
+      <stop offset="1" stop-color="#4f46e5" />
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#818cf8" />
+      <stop offset="1" stop-color="#a78bfa" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#090e20" flood-opacity=".36" />
+    </filter>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0v28" fill="none" stroke="#fff" stroke-opacity=".045" />
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="420" rx="26" fill="url(#background)" />
+  <rect width="1280" height="420" rx="26" fill="url(#grid)" />
+  <circle cx="1150" cy="8" r="210" fill="#38bdf8" opacity=".09" />
+  <circle cx="100" cy="420" r="190" fill="#a78bfa" opacity=".11" />
+
+  <g transform="translate(78 76)">
+    <rect width="52" height="52" rx="14" fill="url(#brand)" />
+    <rect x="11" y="10" width="13" height="13" rx="4" fill="#fff" />
+    <rect x="28" y="10" width="13" height="13" rx="4" fill="#fff" opacity=".7" />
+    <rect x="11" y="28" width="13" height="13" rx="4" fill="#fff" opacity=".7" />
+    <path d="M35 28v3.5a4 4 0 0 1-4 4h-3m0 0 3-3m-3 3 3 3" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="68" y="37" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="34" font-weight="750" letter-spacing="-.8">FormFlow <tspan fill="#c4b5fd">Studio</tspan></text>
+  </g>
+  <text x="78" y="187" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="42" font-weight="750" letter-spacing="-1.4">Design dynamic forms visually.</text>
+  <text x="78" y="226" fill="#c7d2fe" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="19">Build · validate · preview · export</text>
+  <g transform="translate(78 266)" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="650">
+    <rect width="104" height="34" rx="17" fill="#fff" fill-opacity=".12" stroke="#fff" stroke-opacity=".18" />
+    <text x="21" y="22" fill="#e0e7ff">Angular 22</text>
+    <rect x="114" width="92" height="34" rx="17" fill="#fff" fill-opacity=".12" stroke="#fff" stroke-opacity=".18" />
+    <text x="136" y="22" fill="#e0e7ff">Formly</text>
+    <rect x="216" width="78" height="34" rx="17" fill="#fff" fill-opacity=".12" stroke="#fff" stroke-opacity=".18" />
+    <text x="238" y="22" fill="#e0e7ff">Zod</text>
+  </g>
+  <text x="78" y="350" fill="#a5b4fc" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15">Local-first · Safe JSON · Accessible · Open source</text>
+
+  <g transform="translate(656 56)" filter="url(#shadow)">
+    <rect width="546" height="310" rx="18" fill="#f8fafc" />
+    <path d="M18 0h510a18 18 0 0 1 18 18v38H0V18A18 18 0 0 1 18 0Z" fill="#fff" />
+    <circle cx="24" cy="28" r="5" fill="#cbd5e1" />
+    <circle cx="42" cy="28" r="5" fill="#cbd5e1" />
+    <circle cx="60" cy="28" r="5" fill="#cbd5e1" />
+    <rect x="191" y="17" width="164" height="22" rx="11" fill="#eef2ff" />
+    <rect x="15" y="70" width="132" height="224" rx="10" fill="#fff" stroke="#e2e8f0" />
+    <text x="30" y="94" fill="#64748b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="10" font-weight="700">FIELDS</text>
+    <g fill="#eef2ff" stroke="#c7d2fe">
+      <rect x="28" y="108" width="106" height="29" rx="7" />
+      <rect x="28" y="146" width="106" height="29" rx="7" />
+      <rect x="28" y="184" width="106" height="29" rx="7" />
+      <rect x="28" y="222" width="106" height="29" rx="7" />
+    </g>
+    <g fill="#4338ca" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="9" font-weight="650">
+      <text x="41" y="126">Aa  Short text</text>
+      <text x="41" y="164">@   Email</text>
+      <text x="41" y="202">▾   Select</text>
+      <text x="41" y="240">☑   Checkbox</text>
+    </g>
+    <rect x="159" y="70" width="226" height="224" rx="10" fill="#fff" stroke="#e2e8f0" />
+    <text x="175" y="94" fill="#0f172a" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" font-weight="750">Customer onboarding</text>
+    <text x="175" y="112" fill="#64748b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">Collect the details your team needs.</text>
+    <g fill="#fff" stroke="#d8b4fe" stroke-width="1.5">
+      <rect x="174" y="126" width="196" height="42" rx="7" />
+      <rect x="174" y="178" width="196" height="42" rx="7" />
+      <rect x="174" y="230" width="196" height="42" rx="7" />
+    </g>
+    <g fill="#334155" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="9" font-weight="650">
+      <text x="187" y="144">Full name</text>
+      <text x="187" y="196">Work email</text>
+      <text x="187" y="248">Team size</text>
+    </g>
+    <g fill="#94a3b8" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">
+      <text x="187" y="158">Jane Smith</text>
+      <text x="187" y="210">jane@company.com</text>
+      <text x="187" y="262">Choose an option</text>
+    </g>
+    <rect x="397" y="70" width="134" height="224" rx="10" fill="#fff" stroke="#e2e8f0" />
+    <text x="412" y="94" fill="#64748b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="10" font-weight="700">PROPERTIES</text>
+    <text x="412" y="121" fill="#334155" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8" font-weight="650">Label</text>
+    <rect x="412" y="129" width="104" height="28" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="421" y="147" fill="#64748b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">Full name</text>
+    <text x="412" y="178" fill="#334155" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8" font-weight="650">Width</text>
+    <rect x="412" y="186" width="104" height="28" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="421" y="204" fill="#64748b" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">Full width</text>
+    <rect x="412" y="237" width="12" height="12" rx="3" fill="#4f46e5" />
+    <path d="m415 243 3 3 6-7" fill="none" stroke="#fff" stroke-width="1.5" />
+    <text x="432" y="247" fill="#334155" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="8">Required</text>
+  </g>
+</svg>

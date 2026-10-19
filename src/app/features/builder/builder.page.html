@@ -1,0 +1,900 @@
+<div class="builder-page">
+  @if (document(); as form) {
+    <header class="builder-toolbar">
+      <div class="builder-toolbar__start">
+        <a
+          routerLink="/"
+          class="icon-button"
+          aria-label="Back to dashboard"
+          title="Back to dashboard"
+        >
+          <ng-icon name="lucideArrowLeft" />
+        </a>
+        <span class="toolbar-divider" aria-hidden="true"></span>
+        <label class="title-editor">
+          <span class="visually-hidden">Form title</span>
+          <input
+            type="text"
+            data-testid="form-title-input"
+            [value]="form.title"
+            (input)="updateDocument('title', $event)"
+          />
+        </label>
+        <span class="save-state" [class.save-state--error]="store.saveState() === 'error'">
+          @switch (store.saveState()) {
+            @case ('saving') {
+              <span class="save-dot"></span> Saving…
+            }
+            @case ('error') {
+              <ng-icon name="lucideAlertCircle" /> Not saved
+            }
+            @default {
+              <ng-icon name="lucideCheckCircle2" /> Saved locally
+            }
+          }
+        </span>
+      </div>
+
+      <div class="builder-toolbar__actions">
+        <div class="history-actions" aria-label="History controls">
+          <button
+            type="button"
+            class="icon-button"
+            title="Undo"
+            [disabled]="!store.canUndo()"
+            (click)="store.undo()"
+          >
+            <ng-icon name="lucideUndo2" /><span class="visually-hidden">Undo</span>
+          </button>
+          <button
+            type="button"
+            class="icon-button"
+            title="Redo"
+            [disabled]="!store.canRedo()"
+            (click)="store.redo()"
+          >
+            <ng-icon name="lucideRedo2" /><span class="visually-hidden">Redo</span>
+          </button>
+        </div>
+        <span class="toolbar-divider" aria-hidden="true"></span>
+        <button
+          type="button"
+          class="button button--toolbar button--ghost"
+          data-testid="import-json"
+          (click)="openImport()"
+        >
+          <ng-icon name="lucideUpload" aria-hidden="true" /><span>Import</span>
+        </button>
+        <input
+          #importInput
+          type="file"
+          accept="application/json,.json"
+          aria-label="Import FormFlow JSON file"
+          class="visually-hidden"
+          data-testid="import-file-input"
+          (change)="importFile($event)"
+        />
+        <button
+          type="button"
+          class="button button--toolbar button--ghost"
+          data-testid="export-json"
+          (click)="exportOpen.set(true)"
+        >
+          <ng-icon name="lucideDownload" aria-hidden="true" /><span>Export</span>
+        </button>
+        <button
+          type="button"
+          class="button button--toolbar button--primary"
+          (click)="previewOpen.set(true)"
+        >
+          <ng-icon name="lucideEye" aria-hidden="true" /><span>Preview</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="mobile-tabs" aria-label="Builder panels">
+      <button
+        type="button"
+        [class.is-active]="mobilePanel() === 'fields'"
+        (click)="mobilePanel.set('fields')"
+      >
+        <ng-icon name="lucidePanelLeft" />Fields
+      </button>
+      <button
+        type="button"
+        [class.is-active]="mobilePanel() === 'canvas'"
+        (click)="mobilePanel.set('canvas')"
+      >
+        <ng-icon name="lucideLayoutPanelTop" />Canvas
+      </button>
+      <button
+        type="button"
+        [class.is-active]="mobilePanel() === 'properties'"
+        (click)="mobilePanel.set('properties')"
+      >
+        <ng-icon name="lucidePanelRight" />Properties
+      </button>
+    </nav>
+
+    @if (importError()) {
+      <div class="import-toast" role="alert" data-testid="import-error">
+        <ng-icon name="lucideAlertCircle" aria-hidden="true" />
+        <span>{{ importError() }}</span>
+        <button
+          type="button"
+          class="icon-button"
+          aria-label="Dismiss import error"
+          (click)="importError.set('')"
+        >
+          <ng-icon name="lucideX" />
+        </button>
+      </div>
+    }
+
+    <main class="builder-workspace">
+      <aside
+        class="palette"
+        [class.is-mobile-active]="mobilePanel() === 'fields'"
+        aria-label="Field palette"
+      >
+        <div class="panel-heading">
+          <div><strong>Add fields</strong><span>Click to add to the canvas</span></div>
+        </div>
+
+        <div class="palette-scroll">
+          <section class="palette-group" aria-labelledby="basic-fields-title">
+            <h2 id="basic-fields-title">Basic</h2>
+            <div class="palette-grid">
+              @for (item of basicFields; track item.type) {
+                <button
+                  type="button"
+                  [attr.data-testid]="'add-field-' + item.type"
+                  (click)="addField(item.type)"
+                >
+                  <ng-icon [name]="item.icon" aria-hidden="true" /><span>{{ item.label }}</span>
+                </button>
+              }
+            </div>
+          </section>
+
+          <section class="palette-group" aria-labelledby="choice-fields-title">
+            <h2 id="choice-fields-title">Choice</h2>
+            <div class="palette-grid">
+              @for (item of choiceFields; track item.type) {
+                <button
+                  type="button"
+                  [attr.data-testid]="'add-field-' + item.type"
+                  (click)="addField(item.type)"
+                >
+                  <ng-icon [name]="item.icon" aria-hidden="true" /><span>{{ item.label }}</span>
+                </button>
+              }
+            </div>
+          </section>
+
+          <section class="palette-group" aria-labelledby="layout-fields-title">
+            <h2 id="layout-fields-title">Layout</h2>
+            <div class="palette-grid">
+              @for (item of layoutFields; track item.type) {
+                <button
+                  type="button"
+                  [attr.data-testid]="'add-field-' + item.type"
+                  (click)="addField(item.type)"
+                >
+                  <ng-icon [name]="item.icon" aria-hidden="true" /><span>{{ item.label }}</span>
+                </button>
+              }
+            </div>
+          </section>
+
+          <div class="palette-tip">
+            <ng-icon name="lucideInfo" aria-hidden="true" />
+            <p>
+              <strong>Keyboard-friendly</strong>Use the arrow controls on each card to reorder
+              fields without dragging.
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <section
+        class="canvas-panel"
+        [class.is-mobile-active]="mobilePanel() === 'canvas'"
+        aria-label="Form canvas"
+      >
+        <div class="canvas-panel__top">
+          <div>
+            <span class="canvas-kicker">Editing form</span>
+            <h1>{{ form.title || 'Untitled form' }}</h1>
+            @if (form.description) {
+              <p>{{ form.description }}</p>
+            }
+          </div>
+          <button
+            type="button"
+            class="form-settings-button"
+            [class.is-active]="store.selectedFieldId() === null"
+            (click)="store.selectField(null); mobilePanel.set('properties')"
+          >
+            <ng-icon name="lucideSettings2" aria-hidden="true" /> Form settings
+          </button>
+        </div>
+
+        <div class="canvas-wrap">
+          <div
+            class="form-canvas"
+            cdkDropList
+            [cdkDropListData]="form.fields"
+            data-testid="builder-canvas"
+            (cdkDropListDropped)="drop($event)"
+          >
+            @if (form.fields.length === 0) {
+              <div class="canvas-empty">
+                <span><ng-icon name="lucidePlus" aria-hidden="true" /></span>
+                <h2>Add your first field</h2>
+                <p>
+                  Choose a field from the left panel. You can reorder and configure it at any time.
+                </p>
+                <button type="button" class="button button--secondary" (click)="addField('text')">
+                  Add short text
+                </button>
+              </div>
+            } @else {
+              @for (
+                field of form.fields;
+                track field.id;
+                let index = $index;
+                let first = $first;
+                let last = $last
+              ) {
+                <article
+                  class="field-card"
+                  [class.is-selected]="store.selectedFieldId() === field.id"
+                  [class.is-display]="isDisplay(field)"
+                  cdkDrag
+                  data-testid="field-card"
+                  tabindex="0"
+                  (click)="selectField(field.id)"
+                  (keydown.enter)="selectField(field.id)"
+                  (keydown.space)="$event.preventDefault(); selectField(field.id)"
+                >
+                  <div class="field-card__rail">
+                    <button
+                      type="button"
+                      class="drag-handle"
+                      cdkDragHandle
+                      aria-label="Drag {{ field.label }}"
+                      title="Drag to reorder"
+                    >
+                      <ng-icon name="lucideGripVertical" />
+                    </button>
+                  </div>
+
+                  <div class="field-card__body">
+                    <div class="field-card__meta">
+                      <span
+                        ><ng-icon [name]="fieldIcon(field.type)" aria-hidden="true" />{{
+                          fieldTypeLabel(field.type)
+                        }}</span
+                      >
+                      @if (field.condition) {
+                        <em>Conditional</em>
+                      }
+                    </div>
+
+                    @switch (field.type) {
+                      @case ('heading') {
+                        <h2 class="mock-heading">{{ field.label || 'Heading' }}</h2>
+                        @if (field.description) {
+                          <p class="mock-help">{{ field.description }}</p>
+                        }
+                      }
+                      @case ('section') {
+                        <div class="mock-section">
+                          <h2>{{ field.label || 'Section' }}</h2>
+                          @if (field.description) {
+                            <p>{{ field.description }}</p>
+                          }
+                        </div>
+                      }
+                      @case ('divider') {
+                        <hr class="mock-divider" />
+                      }
+                      @default {
+                        <div class="mock-label">
+                          {{ field.label || 'Untitled field' }}
+                          @if (field.validation.required) {
+                            <span>*</span>
+                          }
+                        </div>
+                        @if (field.description) {
+                          <p class="mock-help">{{ field.description }}</p>
+                        }
+                        @switch (field.type) {
+                          @case ('textarea') {
+                            <div class="mock-input mock-input--textarea">
+                              {{ field.placeholder }}
+                            </div>
+                          }
+                          @case ('select') {
+                            <div class="mock-input mock-input--select">
+                              {{ field.placeholder || 'Choose an option'
+                              }}<ng-icon name="lucideChevronDown" />
+                            </div>
+                          }
+                          @case ('radio') {
+                            <div class="mock-choices">
+                              @for (option of field.options; track option.id) {
+                                <span><i class="mock-radio"></i>{{ option.label }}</span>
+                              }
+                            </div>
+                          }
+                          @case ('checkbox') {
+                            <div class="mock-check">
+                              <i></i><span>{{ field.label }}</span>
+                            </div>
+                          }
+                          @case ('toggle') {
+                            <div class="mock-check">
+                              <i class="mock-toggle"></i><span>{{ field.label }}</span>
+                            </div>
+                          }
+                          @default {
+                            <div class="mock-input">{{ field.placeholder }}</div>
+                          }
+                        }
+                      }
+                    }
+                  </div>
+
+                  <div class="field-card__actions">
+                    <button
+                      type="button"
+                      class="icon-button"
+                      data-testid="move-field-up"
+                      title="Move up"
+                      [disabled]="first"
+                      (click)="$event.stopPropagation(); store.moveField(field.id, -1)"
+                    >
+                      <ng-icon name="lucideChevronUp" /><span class="visually-hidden"
+                        >Move {{ field.label }} up</span
+                      >
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-button"
+                      data-testid="move-field-down"
+                      title="Move down"
+                      [disabled]="last"
+                      (click)="$event.stopPropagation(); store.moveField(field.id, 1)"
+                    >
+                      <ng-icon name="lucideChevronDown" /><span class="visually-hidden"
+                        >Move {{ field.label }} down</span
+                      >
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-button"
+                      data-testid="duplicate-field"
+                      title="Duplicate field"
+                      (click)="$event.stopPropagation(); store.duplicateField(field.id)"
+                    >
+                      <ng-icon name="lucideCopy" /><span class="visually-hidden"
+                        >Duplicate {{ field.label }}</span
+                      >
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-button icon-button--danger"
+                      data-testid="delete-field"
+                      title="Delete field"
+                      (click)="$event.stopPropagation(); store.deleteField(field.id)"
+                    >
+                      <ng-icon name="lucideTrash2" /><span class="visually-hidden"
+                        >Delete {{ field.label }}</span
+                      >
+                    </button>
+                  </div>
+
+                  <div class="drag-placeholder" *cdkDragPlaceholder></div>
+                </article>
+              }
+            }
+          </div>
+        </div>
+      </section>
+
+      <aside
+        class="inspector"
+        [class.is-mobile-active]="mobilePanel() === 'properties'"
+        aria-label="Properties panel"
+      >
+        @if (selectedField(); as field) {
+          <div class="inspector__heading">
+            <span class="inspector__field-icon"><ng-icon [name]="fieldIcon(field.type)" /></span>
+            <div>
+              <strong>{{ field.label || 'Untitled field' }}</strong
+              ><span>{{ fieldTypeLabel(field.type) }}</span>
+            </div>
+          </div>
+          <div class="inspector-tabs" role="tablist" aria-label="Field settings">
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="inspectorTab() === 'content'"
+              [class.is-active]="inspectorTab() === 'content'"
+              (click)="inspectorTab.set('content')"
+            >
+              Content
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="inspectorTab() === 'validation'"
+              [class.is-active]="inspectorTab() === 'validation'"
+              [disabled]="isDisplay(field)"
+              (click)="inspectorTab.set('validation')"
+            >
+              Validation
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="inspectorTab() === 'logic'"
+              [class.is-active]="inspectorTab() === 'logic'"
+              (click)="inspectorTab.set('logic')"
+            >
+              Logic
+            </button>
+          </div>
+
+          <div class="inspector-scroll">
+            @if (inspectorTab() === 'content') {
+              <div class="control-group">
+                <label for="field-label">Label</label>
+                <input
+                  id="field-label"
+                  class="field-control"
+                  type="text"
+                  data-testid="field-label-input"
+                  [value]="field.label"
+                  (input)="updateFieldText(field, 'label', $event)"
+                />
+              </div>
+              @if (!isDisplay(field)) {
+                <div class="control-group">
+                  <label for="field-key">Model key</label>
+                  <input
+                    id="field-key"
+                    class="field-control code-input"
+                    type="text"
+                    data-testid="field-key-input"
+                    [value]="field.key"
+                    (change)="updateFieldText(field, 'key', $event)"
+                  />
+                  <small>Used as the property name in exported data.</small>
+                </div>
+              }
+              @if (field.type !== 'divider') {
+                <div class="control-group">
+                  <label for="field-description">Description</label>
+                  <textarea
+                    id="field-description"
+                    class="field-control"
+                    rows="3"
+                    [value]="field.description"
+                    (input)="updateFieldText(field, 'description', $event)"
+                  ></textarea>
+                </div>
+              }
+              @if (
+                !isDisplay(field) &&
+                field.type !== 'checkbox' &&
+                field.type !== 'toggle' &&
+                field.type !== 'radio'
+              ) {
+                <div class="control-group">
+                  <label for="field-placeholder">Placeholder</label>
+                  <input
+                    id="field-placeholder"
+                    class="field-control"
+                    type="text"
+                    [value]="field.placeholder"
+                    (input)="updateFieldText(field, 'placeholder', $event)"
+                  />
+                </div>
+              }
+              <div class="control-group">
+                <label for="field-width">Width</label>
+                <select
+                  id="field-width"
+                  class="field-control"
+                  [value]="field.width"
+                  (change)="updateFieldWidth(field, $event)"
+                >
+                  <option value="full">Full width</option>
+                  <option value="half">Half width</option>
+                  <option value="third">One third</option>
+                </select>
+              </div>
+
+              @if (isChoice(field)) {
+                <div class="options-editor">
+                  <div class="options-editor__heading">
+                    <span class="section-label">Options</span
+                    ><button type="button" (click)="store.addOption(field.id)">
+                      <ng-icon name="lucidePlus" /> Add
+                    </button>
+                  </div>
+                  @for (option of field.options; track option.id; let index = $index) {
+                    <div class="option-row">
+                      <span>{{ index + 1 }}</span>
+                      <input
+                        class="field-control"
+                        type="text"
+                        aria-label="Option {{ index + 1 }} label"
+                        [value]="option.label"
+                        (input)="updateOption(field.id, option.id, 'label', $event)"
+                      />
+                      <input
+                        class="field-control code-input"
+                        type="text"
+                        aria-label="Option {{ index + 1 }} value"
+                        [value]="option.value"
+                        (input)="updateOption(field.id, option.id, 'value', $event)"
+                      />
+                      <button
+                        type="button"
+                        class="icon-button"
+                        [disabled]="field.options.length <= 1"
+                        (click)="store.removeOption(field.id, option.id)"
+                      >
+                        <ng-icon name="lucideX" /><span class="visually-hidden"
+                          >Remove option {{ index + 1 }}</span
+                        >
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (!isDisplay(field)) {
+                <div class="control-group">
+                  @if (field.type === 'checkbox' || field.type === 'toggle') {
+                    <label class="switch-row"
+                      ><span
+                        ><strong>Default state</strong
+                        ><small>Set the field on initially</small></span
+                      ><input
+                        type="checkbox"
+                        [checked]="field.defaultValue === true"
+                        (change)="updateDefaultValue(field, $event)"
+                    /></label>
+                  } @else {
+                    <label for="field-default">Default value</label>
+                    <input
+                      id="field-default"
+                      class="field-control"
+                      [type]="
+                        field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'
+                      "
+                      [value]="field.defaultValue ?? ''"
+                      (input)="updateDefaultValue(field, $event)"
+                    />
+                  }
+                </div>
+              }
+            }
+
+            @if (inspectorTab() === 'validation' && !isDisplay(field)) {
+              <label class="switch-row switch-row--card">
+                <span
+                  ><strong>Required field</strong><small>Users must provide a value</small></span
+                >
+                <input
+                  type="checkbox"
+                  data-testid="field-required-toggle"
+                  [checked]="field.validation.required === true"
+                  (change)="updateValidation(field, 'required', $event)"
+                />
+              </label>
+
+              @if (hasTextValidation(field)) {
+                <div class="two-column-controls">
+                  <div class="control-group">
+                    <label for="min-length">Minimum length</label
+                    ><input
+                      id="min-length"
+                      class="field-control"
+                      type="number"
+                      min="0"
+                      [value]="field.validation.minLength ?? ''"
+                      (input)="updateValidation(field, 'minLength', $event)"
+                    />
+                  </div>
+                  <div class="control-group">
+                    <label for="max-length">Maximum length</label
+                    ><input
+                      id="max-length"
+                      class="field-control"
+                      type="number"
+                      min="1"
+                      [value]="field.validation.maxLength ?? ''"
+                      (input)="updateValidation(field, 'maxLength', $event)"
+                    />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label for="pattern">Pattern (RegExp)</label
+                  ><input
+                    id="pattern"
+                    class="field-control code-input"
+                    type="text"
+                    [value]="field.validation.pattern ?? ''"
+                    (input)="updateValidation(field, 'pattern', $event)"
+                  /><small>Use a JavaScript-compatible pattern without slashes.</small>
+                </div>
+              }
+              @if (hasNumericValidation(field)) {
+                <div class="two-column-controls">
+                  <div class="control-group">
+                    <label for="min-value">Minimum</label
+                    ><input
+                      id="min-value"
+                      class="field-control"
+                      type="number"
+                      [value]="field.validation.min ?? ''"
+                      (input)="updateValidation(field, 'min', $event)"
+                    />
+                  </div>
+                  <div class="control-group">
+                    <label for="max-value">Maximum</label
+                    ><input
+                      id="max-value"
+                      class="field-control"
+                      type="number"
+                      [value]="field.validation.max ?? ''"
+                      (input)="updateValidation(field, 'max', $event)"
+                    />
+                  </div>
+                </div>
+              }
+              @if (!hasTextValidation(field) && !hasNumericValidation(field)) {
+                <div class="inspector-note">
+                  <ng-icon name="lucideInfo" />
+                  <p>
+                    <strong>Ready to validate</strong>This field type supports required validation.
+                    More validation is handled by its available choices.
+                  </p>
+                </div>
+              }
+            }
+
+            @if (inspectorTab() === 'logic') {
+              @if (availableConditionSources(field).length === 0) {
+                <div class="inspector-note">
+                  <ng-icon name="lucideInfo" />
+                  <p>
+                    <strong>Add a source field first</strong>Conditional logic can reference an
+                    input placed earlier in the form.
+                  </p>
+                </div>
+              } @else {
+                <label class="switch-row switch-row--card">
+                  <span
+                    ><strong>Conditional logic</strong
+                    ><small>Control when this field appears</small></span
+                  >
+                  <input
+                    type="checkbox"
+                    [checked]="!!field.condition"
+                    (change)="toggleCondition(field, $any($event.target).checked)"
+                  />
+                </label>
+                @if (field.condition) {
+                  <div class="logic-builder">
+                    <span class="logic-builder__lead">Show this field when</span>
+                    <div class="control-group">
+                      <label for="condition-source">Field</label
+                      ><select
+                        id="condition-source"
+                        class="field-control"
+                        [value]="field.condition.sourceFieldId"
+                        (change)="changeConditionSource(field, $event)"
+                      >
+                        @for (source of availableConditionSources(field); track source.id) {
+                          <option [value]="source.id">{{ source.label }}</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="control-group">
+                      <label for="condition-operator">Operator</label
+                      ><select
+                        id="condition-operator"
+                        class="field-control"
+                        [value]="field.condition.operator"
+                        (change)="updateCondition(field, 'operator', $event)"
+                      >
+                        @for (operator of operators; track operator.value) {
+                          <option [value]="operator.value">{{ operator.label }}</option>
+                        }
+                      </select>
+                    </div>
+                    @if (conditionNeedsValue(field.condition.operator)) {
+                      <div class="control-group">
+                        <label for="condition-value">Value</label>
+                        @if (
+                          conditionSource(field)?.type === 'select' ||
+                          conditionSource(field)?.type === 'radio'
+                        ) {
+                          <select
+                            id="condition-value"
+                            class="field-control"
+                            [value]="field.condition.value"
+                            (change)="updateCondition(field, 'value', $event)"
+                          >
+                            @for (
+                              option of conditionSource(field)?.options ?? [];
+                              track option.id
+                            ) {
+                              <option [value]="option.value">{{ option.label }}</option>
+                            }
+                          </select>
+                        } @else if (
+                          conditionSource(field)?.type === 'checkbox' ||
+                          conditionSource(field)?.type === 'toggle'
+                        ) {
+                          <select
+                            id="condition-value"
+                            class="field-control"
+                            [value]="field.condition.value"
+                            (change)="updateCondition(field, 'value', $event)"
+                          >
+                            <option value="true">Checked / on</option>
+                            <option value="false">Unchecked / off</option>
+                          </select>
+                        } @else {
+                          <input
+                            id="condition-value"
+                            class="field-control"
+                            [type]="conditionSource(field)?.type === 'number' ? 'number' : 'text'"
+                            [value]="field.condition.value ?? ''"
+                            (input)="updateCondition(field, 'value', $event)"
+                          />
+                        }
+                      </div>
+                    }
+                    <p class="logic-summary">
+                      This field will be hidden until the condition is true.
+                    </p>
+                  </div>
+                }
+              }
+            }
+          </div>
+        } @else {
+          <div class="inspector__heading">
+            <span class="inspector__field-icon"><ng-icon name="lucideSettings2" /></span>
+            <div><strong>Form settings</strong><span>General configuration</span></div>
+          </div>
+          <div class="inspector-scroll form-settings">
+            <div class="control-group">
+              <label for="form-description">Description</label
+              ><textarea
+                id="form-description"
+                class="field-control"
+                rows="4"
+                [value]="form.description"
+                (input)="updateDocument('description', $event)"
+              ></textarea
+              ><small>Shown below the title in preview.</small>
+            </div>
+            <div class="control-group">
+              <label for="submit-label">Submit button label</label
+              ><input
+                id="submit-label"
+                class="field-control"
+                type="text"
+                [value]="form.submitLabel"
+                (input)="updateDocument('submitLabel', $event)"
+              />
+            </div>
+            <div class="control-group">
+              <label for="form-locale">Form locale</label
+              ><select
+                id="form-locale"
+                class="field-control"
+                [value]="form.locale"
+                (change)="updateDocument('locale', $event)"
+              >
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+              </select>
+            </div>
+            <div class="inspector-note">
+              <ng-icon name="lucideSave" />
+              <p>
+                <strong>Automatic local save</strong>Changes are saved to this browser after you
+                stop typing.
+              </p>
+            </div>
+          </div>
+        }
+      </aside>
+    </main>
+
+    <div class="sr-announcement" aria-live="polite">{{ store.announcement() }}</div>
+
+    @if (previewOpen()) {
+      <app-preview-panel [document]="form" (closed)="previewOpen.set(false)" />
+    }
+
+    @if (exportOpen()) {
+      <div class="modal-backdrop">
+        <section
+          class="export-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="export-title"
+        >
+          <header>
+            <div>
+              <span class="modal-icon"><ng-icon name="lucideDownload" /></span>
+              <div>
+                <h2 id="export-title">Export your form</h2>
+                <p>Portable schema or typed model — both generated locally.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="icon-button"
+              aria-label="Close export"
+              (click)="exportOpen.set(false)"
+            >
+              <ng-icon name="lucideX" />
+            </button>
+          </header>
+          <div class="export-tabs" role="tablist" aria-label="Export format">
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="exportTab() === 'json'"
+              [attr.aria-selected]="exportTab() === 'json'"
+              (click)="exportTab.set('json')"
+            >
+              <ng-icon name="lucideFileJson" />FormFlow JSON
+            </button>
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="exportTab() === 'typescript'"
+              [attr.aria-selected]="exportTab() === 'typescript'"
+              (click)="exportTab.set('typescript')"
+            >
+              <ng-icon name="lucideCode2" />TypeScript model
+            </button>
+          </div>
+          <div class="code-preview">
+            <div class="code-preview__bar">
+              <span>{{ exportTab() === 'json' ? 'formflow.json' : 'form-value.ts' }}</span
+              ><button type="button" (click)="copyExport()">
+                <ng-icon [name]="copied() ? 'lucideCheckCircle2' : 'lucideCopy'" />{{
+                  copied() ? 'Copied' : 'Copy'
+                }}
+              </button>
+            </div>
+            <pre><code>{{ exportContent() }}</code></pre>
+          </div>
+          <footer>
+            <p>
+              <ng-icon name="lucideInfo" /> No external code or executable expressions are included.
+            </p>
+            <button type="button" class="button button--primary" (click)="downloadExport()">
+              <ng-icon name="lucideDownload" />Download file
+            </button>
+          </footer>
+        </section>
+      </div>
+    }
+  }
+</div>

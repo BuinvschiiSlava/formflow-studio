@@ -1,0 +1,330 @@
+:host {
+  display: contents;
+}
+
+.preview-backdrop {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgb(16 24 40 / 64%);
+  backdrop-filter: blur(4px);
+}
+
+.preview-dialog {
+  display: grid;
+  width: min(1400px, 100%);
+  height: min(940px, calc(100dvh - 48px));
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: 0 28px 72px rgb(16 24 40 / 32%);
+}
+
+.preview-header,
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-inline: 24px;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.preview-header {
+  min-height: 82px;
+  padding-block: 14px;
+}
+
+.preview-heading {
+  min-width: 0;
+}
+
+.preview-eyebrow {
+  margin: 0 0 2px;
+  color: var(--color-brand);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.preview-heading h2 {
+  overflow: hidden;
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-heading p:last-child {
+  margin: 3px 0 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.close-button {
+  font-size: 27px;
+  line-height: 1;
+}
+
+.preview-toolbar {
+  min-height: 58px;
+  padding-block: 9px;
+  background: var(--color-surface-subtle);
+}
+
+.device-picker {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.device-picker button {
+  min-height: 32px;
+  padding: 5px 13px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.device-picker button:hover {
+  color: var(--color-brand-strong);
+}
+
+.device-picker button.is-active {
+  background: var(--color-brand-soft);
+  color: var(--color-brand-strong);
+}
+
+.reset-button {
+  min-height: 36px;
+  padding-block: 6px;
+}
+
+.preview-stage {
+  overflow: auto;
+  padding: 36px;
+  background-color: #e8ecf4;
+  background-image: radial-gradient(circle, rgb(152 162 179 / 35%) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.preview-device {
+  min-height: 100%;
+  margin-inline: auto;
+  transition: width 180ms ease;
+}
+
+.preview-device--desktop {
+  width: min(960px, 100%);
+}
+
+.preview-device--tablet {
+  width: min(720px, 100%);
+}
+
+.preview-device--mobile {
+  width: min(390px, 100%);
+}
+
+.form-surface {
+  width: 100%;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 14px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-heading {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.form-heading h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.form-heading p {
+  max-width: 70ch;
+  margin: 10px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+
+form {
+  margin-top: 28px;
+}
+
+formly-form {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 20px;
+}
+
+:host ::ng-deep formly-field {
+  min-width: 0;
+  grid-column: 1 / -1;
+}
+
+:host ::ng-deep formly-field.formflow-width--half {
+  grid-column: span 3;
+}
+
+:host ::ng-deep formly-field.formflow-width--third {
+  grid-column: span 2;
+}
+
+:host ::ng-deep .mat-mdc-form-field {
+  width: 100%;
+}
+
+:host ::ng-deep .formflow-display-title {
+  margin: 8px 0 0;
+  color: var(--color-text);
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+:host ::ng-deep .formflow-display-description {
+  margin: 5px 0 0;
+  color: var(--color-muted);
+}
+
+:host ::ng-deep .formflow-divider {
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 26px;
+}
+
+.submit-button {
+  min-width: 140px;
+}
+
+.submission-message {
+  display: flex;
+  gap: 4px;
+  margin: 22px 0 0;
+  padding: 13px 15px;
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.submission-message--error {
+  border-color: #fda29b;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.submission-message--success {
+  flex-direction: column;
+  border-color: #75e0a7;
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.model-inspector {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.model-inspector summary {
+  width: fit-content;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.model-inspector pre {
+  max-height: 280px;
+  overflow: auto;
+  margin: 12px 0 0;
+  padding: 16px;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 9px;
+  background: #101828;
+  color: #e4e7ec;
+  font:
+    12px/1.6 'Cascadia Code',
+    'SFMono-Regular',
+    Consolas,
+    monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 700px) {
+  .preview-backdrop {
+    padding: 0;
+  }
+
+  .preview-dialog {
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .preview-header,
+  .preview-toolbar {
+    padding-inline: 16px;
+  }
+
+  .preview-heading p:last-child {
+    display: none;
+  }
+
+  .preview-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .device-picker {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .reset-button {
+    display: none;
+  }
+
+  .preview-stage {
+    padding: 18px 12px 32px;
+  }
+
+  .form-surface {
+    padding: 24px 18px;
+  }
+
+  :host ::ng-deep formly-field.formflow-width--half,
+  :host ::ng-deep formly-field.formflow-width--third {
+    grid-column: 1 / -1;
+  }
+}

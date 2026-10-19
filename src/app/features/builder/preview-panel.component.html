@@ -1,0 +1,124 @@
+<div class="preview-backdrop" data-testid="preview-panel">
+  <section
+    #dialog
+    class="preview-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="preview-title"
+    aria-describedby="preview-description"
+    cdkTrapFocus
+    [cdkTrapFocusAutoCapture]="true"
+  >
+    <header class="preview-header">
+      <div class="preview-heading">
+        <p class="preview-eyebrow">Live preview</p>
+        <h2 id="preview-title">{{ document().title }}</h2>
+        <p id="preview-description">
+          Test the generated form, its validation, and responsive layout.
+        </p>
+      </div>
+
+      <button
+        class="icon-button close-button"
+        type="button"
+        aria-label="Close preview"
+        (click)="close()"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </header>
+
+    <div class="preview-toolbar" aria-label="Preview controls">
+      <div class="device-picker" role="group" aria-label="Preview width">
+        <button
+          type="button"
+          [class.is-active]="device() === 'desktop'"
+          [attr.aria-pressed]="device() === 'desktop'"
+          (click)="setDevice('desktop')"
+        >
+          Desktop
+        </button>
+        <button
+          type="button"
+          [class.is-active]="device() === 'tablet'"
+          [attr.aria-pressed]="device() === 'tablet'"
+          (click)="setDevice('tablet')"
+        >
+          Tablet
+        </button>
+        <button
+          type="button"
+          [class.is-active]="device() === 'mobile'"
+          [attr.aria-pressed]="device() === 'mobile'"
+          (click)="setDevice('mobile')"
+        >
+          Mobile
+        </button>
+      </div>
+
+      <button class="button button--secondary reset-button" type="button" (click)="reset()">
+        Reset values
+      </button>
+    </div>
+
+    <div class="preview-stage">
+      <div
+        class="preview-device"
+        [class.preview-device--desktop]="device() === 'desktop'"
+        [class.preview-device--tablet]="device() === 'tablet'"
+        [class.preview-device--mobile]="device() === 'mobile'"
+      >
+        <div class="form-surface">
+          <div class="form-heading">
+            <h3>{{ document().title }}</h3>
+            @if (document().description) {
+              <p>{{ document().description }}</p>
+            }
+          </div>
+
+          @if (submissionState() === 'success') {
+            <div class="submission-message submission-message--success" role="status">
+              @if (document().locale === 'ru') {
+                <strong>Форма успешно отправлена.</strong>
+                <span>Это предпросмотр: данные никуда не отправлялись.</span>
+              } @else {
+                <strong>Form submitted successfully.</strong>
+                <span>This is a preview, so no data was sent anywhere.</span>
+              }
+            </div>
+          } @else {
+            <form [formGroup]="form()" (ngSubmit)="submit()" data-testid="preview-form" novalidate>
+              <formly-form
+                [form]="form()"
+                [fields]="fields()"
+                [model]="model()"
+                (modelChange)="onModelChange($event)"
+              />
+
+              @if (submissionState() === 'invalid') {
+                <p class="submission-message submission-message--error" role="alert">
+                  @if (document().locale === 'ru') {
+                    Проверьте выделенные поля перед отправкой.
+                  } @else {
+                    Please review the highlighted fields before submitting.
+                  }
+                </p>
+              }
+
+              <div class="form-actions">
+                <button class="button button--primary submit-button" type="submit">
+                  {{ document().submitLabel }}
+                </button>
+              </div>
+            </form>
+          }
+
+          <details class="model-inspector">
+            <summary>Live model JSON</summary>
+            <pre><code>{{ modelJson }}</code></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
