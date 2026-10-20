@@ -22,6 +22,13 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # Angular 22 supports TypeScript 6.x. Keep automated updates within the
+      # compatible compiler major and review the TypeScript 7 migration together
+      # with a future Angular major upgrade.
+      - dependency-name: 'typescript'
+        update-types:
+          - 'version-update:semver-major'
     commit-message:
       prefix: 'chore(deps)'
     labels:
