@@ -100,8 +100,8 @@ test('duplicates, reorders, and deletes fields', async ({ page }) => {
   await page.locator('.field-card.is-selected').getByTestId('duplicate-field').click();
   await expect(cards).toHaveCount(3);
 
-  await page.locator('.field-card.is-selected').getByTestId('move-field-down').click();
   await page.locator('.field-card.is-selected').getByTestId('move-field-up').click();
+  await page.locator('.field-card.is-selected').getByTestId('move-field-down').click();
 
   await page.locator('.field-card.is-selected').getByTestId('delete-field').click();
   await expect(cards).toHaveCount(2);
